@@ -41,7 +41,7 @@ function getInfos(tabId) {
             if (template == "Normal") {
                 videoName = new Promise(function (resolve, reject) {
                     chrome.tabs.executeScript(tabId, {
-                        code: 'document.getElementsByClassName("\\\nnavigation-page navigation-page-active")[0].innerText;'
+                        code: 'document.getElementsByClassName("\\\nnavigation-page navigation-page-active")[0].innerText.trim();'
                     }, function (result) {
                         resolve(result);
                     })
@@ -49,7 +49,7 @@ function getInfos(tabId) {
 
                 moduleName = new Promise(function (resolve, reject) {
                     chrome.tabs.executeScript(tabId, {
-                        code: 'document.getElementsByClassName("\\\nnavigation-page navigation-page-active")[0].parentNode.parentNode.getElementsByClassName("navigation-module-title")[0].innerText;'
+                        code: 'document.getElementsByClassName("\\\nnavigation-page navigation-page-active")[0].parentNode.parentNode.getElementsByClassName("navigation-module-title")[0].innerText.trim();'
                     }, function (result) {
                         resolve(result);
                     })
@@ -57,7 +57,7 @@ function getInfos(tabId) {
 
                 courseName = new Promise(function (resolve, reject) {
                     chrome.tabs.executeScript(tabId, {
-                        code: 'document.getElementsByClassName("membership-info-name")[0].innerText;'
+                        code: 'document.getElementsByClassName("membership-info-name")[0].innerText.trim();'
                     }, function (result) {
                         resolve(result);
                     })
