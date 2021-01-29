@@ -6,6 +6,7 @@ function getInfos(tabId) {
         let currentUrl;
         let currentCode;
         let template;
+        let openWindowMovie;
         let videoId;
         let videoName;
         let moduleName;
@@ -17,11 +18,23 @@ function getInfos(tabId) {
             //console.log(currentUrl);
         });
 
+        openWindowMovie = new Promise(function (resolve, reject) {
+            chrome.tabs.executeScript(tabId, {
+                code: 'document.getElementsByClassName("media page__media")[0].getElementsByTagName("button")[0].click();'
+            }, function (result) {
+                console.log("clicked windowMovie");
+                resolve(result)
+            })
+        })
+
+
         videoId = new Promise(function (resolve, reject) {
             chrome.tabs.executeScript(tabId, {
-                code: 'document.getElementsByClassName("hero__section")[0].outerHTML;'
+                // code: 'document.getElementsByClassName("hero__section")[0].outerHTML;'
+                code: 'document.getElementsByClassName("media page__media")[0].outerHTML;'
             }, function (result) {
-                videoId = getSubstring(String(result), "thumbnail/", "/dimension?");
+                // videoId = getSubstring(String(result), "thumbnail/", "/dimension?");
+                videoId = getSubstring(String(result),".com/embed/", "?token=");
                 template = "Midnight";
                 if (videoId) {
                     resolve([videoId, template]);
@@ -177,8 +190,9 @@ function getVideoQualities(videoId) {
             if (httpReq.readyState == 4 && httpReq.status == 200) {
                 let qualities = httpReq.responseText.match(RegExp(`(.*).m3u8`, 'g')).map(function (i) { return i.replace('.m3u8', '').split('/')});
                 let i;
+                console.log(qualities);
                 for(i = 0; i<qualities.length; i++) {
-                    if(Number(qualities[i][0]) >= 720) {
+                    if(Number(qualities[i][0]) >= 240) {
                         resolve(qualities[i]);
                     }
                 }
@@ -269,6 +283,18 @@ function decrypt(segment, key) {
 
 function doAgain(currentTab) {
     console.log("Waiting for the page to load...")
+    
+    // botao para exibir video.
+    // console.log('Abrindo janela do vídeo atual');
+    // document.getElementsByClassName("media page__media")[0].getElementsByTagName('button')[0].click();
+
+    setTimeout(function () {
+        getInfos(currentTab).then(function ([openWindowMovie]){
+
+        })
+    }, 5000);
+
+
     setTimeout(function () {
         console.clear();
         getInfos(currentTab).then(function ([videoId, videoName, moduleName, courseName, nextVideo, currentCode, currentUrl, template]) {
@@ -366,7 +392,7 @@ function doAgain(currentTab) {
                 });
             })
         })
-    }, 10000);
+    }, 13000);
 }
 
 let isRunning = false;
